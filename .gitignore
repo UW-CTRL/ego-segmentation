@@ -1,0 +1,19 @@
+# --- Python Virtual Environments & Cache ---
+__pycache__/
+*.py[cod]
+*venv*/
+.env
+
+# --- Large Data Files ---
+*.mp4
+*.avi
+*.npz
+
+# --- Model Weights (SAM2 & YOLO) ---
+*.pt
+*.pth
+*.weights
+
+# --- OS & Temporary Files ---
+.DS_Store
+temp_frames/

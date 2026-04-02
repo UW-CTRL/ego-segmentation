@@ -1,0 +1,6 @@
+numpy
+torch
+Pillow
+matplotlib
+opencv-python
+sam2
