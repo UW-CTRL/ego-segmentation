@@ -40,7 +40,7 @@ The main entry point is `run_segmentation_pipeline`, which returns:
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/UW-CTRL/ego-segmentation.git
 cd ego-segmentation
 ```
 
