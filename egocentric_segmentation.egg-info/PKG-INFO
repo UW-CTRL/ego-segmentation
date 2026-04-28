@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: egocentric_segmentation
+Version: 0.1.1
+Summary: Egocentric Video Segmentation using SAM2 and YOLOv5
+Requires-Python: >=3.8
+Requires-Dist: numpy
+Requires-Dist: torch
+Requires-Dist: Pillow
+Requires-Dist: matplotlib
+Requires-Dist: opencv-python
+Requires-Dist: ultralytics
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

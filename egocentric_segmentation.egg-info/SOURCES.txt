@@ -1,0 +1,12 @@
+README.md
+setup.py
+egocentric_segmentation.egg-info/PKG-INFO
+egocentric_segmentation.egg-info/SOURCES.txt
+egocentric_segmentation.egg-info/dependency_links.txt
+egocentric_segmentation.egg-info/entry_points.txt
+egocentric_segmentation.egg-info/requires.txt
+egocentric_segmentation.egg-info/top_level.txt
+egosegmentation/__init__.py
+egosegmentation/core.py
+egosegmentation/models.py
+egosegmentation/utils.py

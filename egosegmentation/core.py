@@ -1,9 +1,11 @@
 import numpy as np
+import cv2
 from .utils import (
-    IoU, extract_frames_npz, extract_frames, get_timestamp, dict_builder, 
-    check_if_already_segmented, build_object_box, build_gaze_box, process_data
+    IoU, extract_frames, get_timestamp, dict_builder, 
+    check_if_already_segmented, build_object_box, build_gaze_box, process_data,
+    connect_to_pupil, get_data_live
 )
-from .models import setup_device, load_models
+from .models import setup_device, load_models, load_live_model
 
 def run_segmentation_pipeline(sam2_checkpoint, model_cfg, detection_threshold=0.3, elapse_threshold=10, data_npz_path=None, video_path=None, csv_path=None):    
     """Run the full egocentric segmentation pipeline over input frames.
@@ -161,3 +163,40 @@ def run_segmentation_pipeline(sam2_checkpoint, model_cfg, detection_threshold=0.
         tempdir.cleanup()  # Clean up temporary directory
     print("Pipeline Complete")
     return objects_key, video_segments
+
+def run_live_pipeline():
+    """Real-time pipeline using Ultralytics tracking and mouse-simulated gaze."""
+    
+    # Use your custom setup to get CUDA/MPS/CPU
+    device = setup_device()
+
+    # Initialize YOLOv8 segmentation model (it will auto-download the tiny weights)
+    print("Loading Ultralytics model...")
+    model = load_live_model(device)
+
+    # Connect to Pupil Labs eye tracker and start receiving gaze data
+    pupil_device = connect_to_pupil()
+    frame, gx, gy = get_data_live(pupil_device)
+
+    print("Starting live feed. Press 'q' to quit.")
+
+    while True:
+        frame, gx, gy = get_data_live(pupil_device)
+        if frame is None:
+            break
+
+        # Run tracking and segmentation on the current frame
+        results = model.track(frame, persist=True)
+        
+        # Plot the native Ultralytics annotations
+        annotated_frame = results[0].plot()
+
+        # Overlay the simulated gaze cursor as a red dot
+        cv2.circle(annotated_frame, (gx, gy), 8, (0, 0, 255), -1)
+
+        cv2.imshow('Live Egocentric Tracking', annotated_frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cv2.destroyAllWindows()

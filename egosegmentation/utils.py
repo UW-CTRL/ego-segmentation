@@ -4,6 +4,8 @@ import csv
 import copy
 import tempfile
 import numpy as np
+from pupil_labs.realtime_api.simple import discover_one_device
+
 
 def IoU(box1, box2):
     """Compute the Intersection over Union (IoU) of two bounding boxes.
@@ -219,3 +221,26 @@ def process_data(data_npz_path, video_path, csv_path):
         scene_arr = load_video_frames(video_path, "temp_frames")
         gaze_data = load_gaze_data(csv_path)
     return scene_arr, gaze_data
+
+def connect_to_pupil():
+    """Establish connection to the Pupil Labs eye tracker and return gaze state."""
+    # Look for devices. Returns as soon as it has found the first device.
+    print("Looking for the next best device...")
+    device = discover_one_device(max_search_duration_seconds=10)
+    if device is None:
+        print("No device found. Are the glasses on and connected to the same network? Exiting.")
+        raise SystemExit(-1)
+    return device
+
+def get_data_live(device):
+    frame, gaze = device.receive_matched_scene_video_frame_and_gaze()
+    if frame is not None and gaze is not None:
+        # Extract gaze coordinates
+        x = int(gaze['norm_pos'][0] * frame.shape[1])
+        y = int(gaze['norm_pos'][1] * frame.shape[0])
+        return frame, x, y
+    else:
+        print("Failed to receive matched scene video frame and gaze data. \
+                         Are the glasses on and connected to the same network?")
+        raise SystemExit(-1)
+

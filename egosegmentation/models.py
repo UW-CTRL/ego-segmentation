@@ -1,6 +1,6 @@
 import os
 import torch
-from sam2.build_sam import build_sam2_video_predictor, build_sam2
+from ultralytics import YOLO
 
 def setup_device():
     """Select and configure the best available Torch device.
@@ -31,6 +31,18 @@ def setup_device():
     
     return device
 
+def load_live_model(device):
+    """Load the Ultralytics segmentation model for real-time tracking."""
+    print(f"Loading YOLOv8 segmentation model on {device}...")
+    
+    # Load the nano segmentation model for the best real-time framerate
+    model = YOLO('yolov8n-seg.pt')
+    
+    # Move the model to the optimal hardware device
+    model.to(device)
+    
+    return model
+
 def load_models(sam2_checkpoint, model_cfg, device):
     """Load SAM2 predictor/models and a YOLOv5 detector onto the given device.
 
@@ -42,6 +54,8 @@ def load_models(sam2_checkpoint, model_cfg, device):
     Returns:
         tuple: (predictor, sam2, yolo_model).
     """
+    from sam2.build_sam import build_sam2_video_predictor, build_sam2
+
     predictor = build_sam2_video_predictor(model_cfg, sam2_checkpoint, device=device)
     sam2 = build_sam2(model_cfg, sam2_checkpoint, device=device, apply_postprocessing=False)
     

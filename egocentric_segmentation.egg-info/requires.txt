@@ -3,5 +3,4 @@ torch
 Pillow
 matplotlib
 opencv-python
-sam2
 ultralytics
