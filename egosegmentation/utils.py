@@ -236,9 +236,9 @@ def get_data_live(device):
     frame, gaze = device.receive_matched_scene_video_frame_and_gaze()
     if frame is not None and gaze is not None:
         # Extract gaze coordinates
-        x = int(gaze['norm_pos'][0] * frame.shape[1])
-        y = int(gaze['norm_pos'][1] * frame.shape[0])
-        return frame, x, y
+        x = int(gaze.x)
+        y = int(gaze.y)
+        return frame.bgr_pizels, int(x), int(y)
     else:
         print("Failed to receive matched scene video frame and gaze data. \
                          Are the glasses on and connected to the same network?")

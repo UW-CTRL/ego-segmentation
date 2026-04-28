@@ -5,3 +5,4 @@ matplotlib
 opencv-python
 sam2
 ultralytics
+pupil-labs-realtime-api
