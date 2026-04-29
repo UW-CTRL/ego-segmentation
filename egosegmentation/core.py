@@ -174,8 +174,7 @@ def run_live_pipeline(safety_mode=False):
     print("Loading Ultralytics model...")
     model = load_live_model(device)
     model.conf = 0.5
-    if safety_mode:
-        model.classes = [0, 15, 16, 17, 18, 19, 20]
+    classes = [0, 15, 16, 17, 18, 19, 20]
     # Connect to Pupil Labs eye tracker and start receiving gaze data
     pupil_device = connect_to_pupil()
     frame, gx, gy = get_data_live(pupil_device)
@@ -188,7 +187,7 @@ def run_live_pipeline(safety_mode=False):
             break
 
         # Run tracking and segmentation on the current frame
-        results = model.track(frame, persist=True)
+        results = model.track(frame, persist=True, classes=classes if safety_mode else None)
         
         # Plot the native Ultralytics annotations
         annotated_frame = results[0].plot()
