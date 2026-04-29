@@ -238,7 +238,7 @@ def get_data_live(device):
         # Extract gaze coordinates
         x = int(gaze.x)
         y = int(gaze.y)
-        return frame.bgr_pizels, int(x), int(y)
+        return frame.bgr_pixels, int(x), int(y)
     else:
         print("Failed to receive matched scene video frame and gaze data. \
                          Are the glasses on and connected to the same network?")

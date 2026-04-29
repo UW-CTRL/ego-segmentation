@@ -164,7 +164,7 @@ def run_segmentation_pipeline(sam2_checkpoint, model_cfg, detection_threshold=0.
     print("Pipeline Complete")
     return objects_key, video_segments
 
-def run_live_pipeline():
+def run_live_pipeline(safety_mode=False):
     """Real-time pipeline using Ultralytics tracking and mouse-simulated gaze."""
     
     # Use your custom setup to get CUDA/MPS/CPU
@@ -173,7 +173,9 @@ def run_live_pipeline():
     # Initialize YOLOv8 segmentation model (it will auto-download the tiny weights)
     print("Loading Ultralytics model...")
     model = load_live_model(device)
-
+    model.conf = 0.5
+    if safety_mode:
+        model.classes = [0, 15, 16, 17, 18, 19, 20]
     # Connect to Pupil Labs eye tracker and start receiving gaze data
     pupil_device = connect_to_pupil()
     frame, gx, gy = get_data_live(pupil_device)
@@ -192,7 +194,7 @@ def run_live_pipeline():
         annotated_frame = results[0].plot()
 
         # Overlay the simulated gaze cursor as a red dot
-        cv2.circle(annotated_frame, (gx, gy), 8, (0, 0, 255), -1)
+        cv2.circle(annotated_frame, (gx, gy), 60, (0, 0, 255), 10)
 
         cv2.imshow('Live Egocentric Tracking', annotated_frame)
 
