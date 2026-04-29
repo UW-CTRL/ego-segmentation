@@ -15,9 +15,7 @@ def main():
     args = parser.parse_args()
 
     if args.live:
-        run_live_pipeline()
-        if args.safety:
-            run_live_pipeline(safety_mode=True)
+        run_live_pipeline(safety_mode=args.safety)
     else:
         # Pass the arguments to your existing offline pipeline
         if not args.sam2_checkpoint or not args.model_cfg:
