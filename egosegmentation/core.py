@@ -187,15 +187,15 @@ def run_live_pipeline(safety_mode=False):
             break
 
         # Run tracking and segmentation on the current frame
-        results = model.track(frame, persist=True, classes=classes if safety_mode else None)
+        results = model.track(frame, persist=True, conf=0.5, classes=classes if safety_mode else None)
 
         ## We need to mask the output and plot only looked at safety objects
         if safety_mode:
             annotated_frame = frame.copy()
             if results[0].boxes is not None:
-                boxes = results[0].boxes.cpu().numpy()
+                boxes = results[0].boxes.data.cpu().numpy()
                 for i, box in enumerate(boxes):
-                    box_obj, _ = build_object_box(box)
+                    box_obj, _ = build_object_box(box[0:6])
                     IoU_score = IoU(box_obj, build_gaze_box(gx, gy))
                     if IoU_score > 0:
                         annotated_frame = results[0][i].plot(img=annotated_frame)
