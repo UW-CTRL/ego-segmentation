@@ -188,9 +188,19 @@ def run_live_pipeline(safety_mode=False):
 
         # Run tracking and segmentation on the current frame
         results = model.track(frame, persist=True, classes=classes if safety_mode else None)
-        
-        # Plot the native Ultralytics annotations
-        annotated_frame = results[0].plot()
+
+        ## We need to mask the output and plot only looked at safety objects
+        if safety_mode:
+            annotated_frame = frame.copy()
+            if results[0].boxes is not None:
+                boxes = results[0].boxes.cpu().numpy()
+                for i, box in enumerate(boxes):
+                    box_obj, _ = build_object_box(box)
+                    IoU_score = IoU(box_obj, build_gaze_box(gx, gy))
+                    if IoU_score > 0:
+                        annotated_frame = results[0][i].plot(img=annotated_frame)
+        else:
+            annotated_frame = results[0].plot()# Plot the native Ultralytics annotations
 
         # Overlay the simulated gaze cursor as a red dot
         cv2.circle(annotated_frame, (gx, gy), 60, (0, 0, 255), 10)
